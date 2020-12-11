@@ -34,6 +34,7 @@ public class GraphicsDisplay extends JPanel {
     private BasicStroke markerStroke;
     // Различные шрифты отображения надписей
     private Font axisFont;
+
     public GraphicsDisplay() {
 // Цвет заднего фона области отображения - белый
         setBackground(Color.WHITE);
@@ -50,7 +51,8 @@ public class GraphicsDisplay extends JPanel {
 // Шрифт для подписей осей координат
         axisFont = new Font("Serif", Font.BOLD, 36);
     }
-// Данный метод вызывается из обработчика элемента меню "Открыть файл сграфиком"
+
+    // Данный метод вызывается из обработчика элемента меню "Открыть файл сграфиком"
     // главного окна приложения в случае успешной загрузки данных
     public void showGraphics(Double[][] graphicsData) {
 // Сохранить массив точек во внутреннем поле класса
@@ -58,16 +60,19 @@ public class GraphicsDisplay extends JPanel {
 // Запросить перерисовку компонента, т.е. неявно вызватьpaintComponent()
         repaint();
     }
+
     // Методы-модификаторы для изменения параметров отображения графика
 // Изменение любого параметра приводит к перерисовке области
     public void setShowAxis(boolean showAxis) {
         this.showAxis = showAxis;
         repaint();
     }
+
     public void setShowMarkers(boolean showMarkers) {
         this.showMarkers = showMarkers;
         repaint();
     }
+
     // Метод отображения всего компонента, содержащего график
     public void paintComponent(Graphics g) {
         /* Шаг 1 - Вызвать метод предка для заливки области цветом заднего фона
@@ -76,20 +81,20 @@ public class GraphicsDisplay extends JPanel {
          */
         super.paintComponent(g);
 // Шаг 2 - Если данные графика не загружены (при показе компонентапри запуске программы) - ничего не делать
-        if (graphicsData==null || graphicsData.length==0) return;
+        if (graphicsData == null || graphicsData.length == 0) return;
 // Шаг 3 - Определить минимальное и максимальное значения длякоординат X и Y
 // Это необходимо для определения области пространства, подлежащейотображению
 // Еѐ верхний левый угол это (minX, maxY) - правый нижний это(maxX, minY);
         minX = graphicsData[0][0];
-        maxX = graphicsData[graphicsData.length-1][0];
+        maxX = graphicsData[graphicsData.length - 1][0];
         minY = graphicsData[0][1];
         maxY = minY;
 // Найти минимальное и максимальное значение функции
-        for (int i = 1; i<graphicsData.length; i++) {
-            if (graphicsData[i][1]<minY) {
+        for (int i = 1; i < graphicsData.length; i++) {
+            if (graphicsData[i][1] < minY) {
                 minY = graphicsData[i][1];
             }
-            if (graphicsData[i][1]>maxY) {
+            if (graphicsData[i][1] > maxY) {
                 maxY = graphicsData[i][1];
             }
         }
@@ -103,7 +108,7 @@ public class GraphicsDisplay extends JPanel {
 // Выбираем за основу минимальный
         scale = Math.min(scaleX, scaleY);
 // Шаг 6 - корректировка границ отображаемой области согласновыбранному масштабу
-        if (scale==scaleX) {
+        if (scale == scaleX) {
 /* Если за основу был взят масштаб по оси X, значит по оси Y
 делений меньше,
 * т.е. подлежащий визуализации диапазон по Y будет меньше
@@ -115,15 +120,15 @@ public class GraphicsDisplay extends JPanel {
 * 3) Набросим по половине недостающего расстояния на maxY и
 minY
 */
-            double yIncrement = (getSize().getHeight()/scale - (maxY -
-                    minY))/2;
+            double yIncrement = (getSize().getHeight() / scale - (maxY -
+                    minY)) / 2;
             maxY += yIncrement;
             minY -= yIncrement;
         }
-        if (scale==scaleY) {
+        if (scale == scaleY) {
 // Если за основу был взят масштаб по оси Y, действовать по аналогии
-            double xIncrement = (getSize().getWidth()/scale - (maxX -
-                    minX))/2;
+            double xIncrement = (getSize().getWidth() / scale - (maxX -
+                    minX)) / 2;
             maxX += xIncrement;
             minX -= xIncrement;
         }
@@ -147,6 +152,7 @@ minY
         canvas.setColor(oldColor);
         canvas.setStroke(oldStroke);
     }
+
     // Отрисовка графика по прочитанным координатам
     protected void paintGraphics(Graphics2D canvas) {
 // Выбрать линию для рисования графика
@@ -160,11 +166,11 @@ minY
 * следующими точками
 */
         GeneralPath graphics = new GeneralPath();
-        for (int i=0; i<graphicsData.length; i++) {
+        for (int i = 0; i < graphicsData.length; i++) {
 // Преобразовать значения (x,y) в точку на экране point
             Point2D.Double point = xyToPoint(graphicsData[i][0],
                     graphicsData[i][1]);
-            if (i>0) {
+            if (i > 0) {
 // Не первая итерация цикла - вести линию в точку  point
                 graphics.lineTo(point.getX(), point.getY());
             } else {
@@ -175,6 +181,7 @@ minY
 // Отобразить график
         canvas.draw(graphics);
     }
+
     // Отображение маркеров точек, по которым рисовался график
     protected void paintMarkers(Graphics2D canvas) {
 // Шаг 1 - Установить специальное перо для черчения контуровмаркеров
@@ -184,7 +191,7 @@ minY
 // Выбрать красный цвет для закрашивания маркеров внутри
         canvas.setPaint(Color.RED);
 // Шаг 2 - Организовать цикл по всем точкам графика
-        for (Double[] point: graphicsData) {
+        for (Double[] point : graphicsData) {
 // Инициализировать эллипс как объект для представлениямаркера
             Ellipse2D.Double marker = new Ellipse2D.Double();
 /* Эллипс будет задаваться посредством указания координат
@@ -200,6 +207,7 @@ minY
             canvas.fill(marker); // Залить внутреннюю область маркера
         }
     }
+
     // Метод, обеспечивающий отображение осей координат
     protected void paintAxis(Graphics2D canvas) {
 // Установить особое начертание для осей
@@ -211,24 +219,24 @@ minY
 // Подписи к координатным осям делаются специальным шрифтом
         canvas.setFont(axisFont);
 // Создать объект контекста отображения текста - для полученияхарактеристик устройства (экрана)
-                FontRenderContext context = canvas.getFontRenderContext();
+        FontRenderContext context = canvas.getFontRenderContext();
 // Определить, должна ли быть видна ось Y на графике
-        if (minX<=0.0 && maxX>=0.0) {
+        if (minX <= 0.0 && maxX >= 0.0) {
 // Она должна быть видна, если левая граница показываемойобласти (minX) <= 0.0,
 // а правая (maxX) >= 0.0
 // Сама ось - это линия между точками (0, maxY) и (0, minY)
-                    canvas.draw(new Line2D.Double(xyToPoint(0, maxY),
-                            xyToPoint(0, minY)));
+            canvas.draw(new Line2D.Double(xyToPoint(0, maxY),
+                    xyToPoint(0, minY)));
 // Стрелка оси Y
             GeneralPath arrow = new GeneralPath();
 // Установить начальную точку ломаной точно на верхний конецоси Y
             Point2D.Double lineEnd = xyToPoint(0, maxY);
             arrow.moveTo(lineEnd.getX(), lineEnd.getY());
 // Вести левый "скат" стрелки в точку с относительными координатами (5,20)
-            arrow.lineTo(arrow.getCurrentPoint().getX()+5,
-                    arrow.getCurrentPoint().getY()+20);
+            arrow.lineTo(arrow.getCurrentPoint().getX() + 5,
+                    arrow.getCurrentPoint().getY() + 20);
 // Вести нижнюю часть стрелки в точку с относительнымикоординатами (-10, 0)
-            arrow.lineTo(arrow.getCurrentPoint().getX()-10,
+            arrow.lineTo(arrow.getCurrentPoint().getX() - 10,
                     arrow.getCurrentPoint().getY());
 // Замкнуть треугольник стрелки
             arrow.closePath();
@@ -239,26 +247,26 @@ minY
             Rectangle2D bounds = axisFont.getStringBounds("y", context);
             Point2D.Double labelPos = xyToPoint(0, maxY);
 // Вывести надпись в точке с вычисленными координатами
-            canvas.drawString("y", (float)labelPos.getX() + 10,
-                    (float)(labelPos.getY() - bounds.getY()));
+            canvas.drawString("y", (float) labelPos.getX() + 10,
+                    (float) (labelPos.getY() - bounds.getY()));
         }
 // Определить, должна ли быть видна ось X на графике
-        if (minY<=0.0 && maxY>=0.0) {
+        if (minY <= 0.0 && maxY >= 0.0) {
 // Она должна быть видна, если верхняя граница показываемойобласти (maxX) >= 0.0,
 // а нижняя (minY) <= 0.0
-                    canvas.draw(new Line2D.Double(xyToPoint(minX, 0),
-                            xyToPoint(maxX, 0)));
+            canvas.draw(new Line2D.Double(xyToPoint(minX, 0),
+                    xyToPoint(maxX, 0)));
 // Стрелка оси X
             GeneralPath arrow = new GeneralPath();
 // Установить начальную точку ломаной точно на правый конецоси X
             Point2D.Double lineEnd = xyToPoint(maxX, 0);
             arrow.moveTo(lineEnd.getX(), lineEnd.getY());
 // Вести верхний "скат" стрелки в точку с относительнымикоординатами (-20,-5)
-            arrow.lineTo(arrow.getCurrentPoint().getX()-20,
-                    arrow.getCurrentPoint().getY()-5);
+            arrow.lineTo(arrow.getCurrentPoint().getX() - 20,
+                    arrow.getCurrentPoint().getY() - 5);
 // Вести левую часть стрелки в точку с относительнымикоординатами (0, 10)
             arrow.lineTo(arrow.getCurrentPoint().getX(),
-                    arrow.getCurrentPoint().getY()+10);
+                    arrow.getCurrentPoint().getY() + 10);
 // Замкнуть треугольник стрелки
             arrow.closePath();
             canvas.draw(arrow); // Нарисовать стрелку
@@ -268,10 +276,11 @@ minY
             Rectangle2D bounds = axisFont.getStringBounds("x", context);
             Point2D.Double labelPos = xyToPoint(maxX, 0);
 // Вывести надпись в точке с вычисленными координатами
-            canvas.drawString("x", (float)(labelPos.getX() -
-                    bounds.getWidth() - 10), (float)(labelPos.getY() + bounds.getY()));
+            canvas.drawString("x", (float) (labelPos.getX() -
+                    bounds.getWidth() - 10), (float) (labelPos.getY() + bounds.getY()));
         }
     }
+
     /* Метод-помощник, осуществляющий преобразование координат.
     * Оно необходимо, т.к. верхнему левому углу холста с координатами
     * (0.0, 0.0) соответствует точка графика с координатами (minX, maxY),
@@ -284,8 +293,9 @@ minY
         double deltaX = x - minX;
 // Вычисляем смещение Y от точки верхней точки (maxY)
         double deltaY = maxY - y;
-        return new Point2D.Double(deltaX*scale, deltaY*scale);
+        return new Point2D.Double(deltaX * scale, deltaY * scale);
     }
+
     /* Метод-помощник, возвращающий экземпляр класса Point2D.Double
      * смещѐнный по отношению к исходному на deltaX, deltaY
      * К сожалению, стандартного метода, выполняющего такую задачу, нет.
@@ -298,3 +308,4 @@ minY
         dest.setLocation(src.getX() + deltaX, src.getY() + deltaY);
         return dest;
     }
+}
